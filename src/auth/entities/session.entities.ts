@@ -7,41 +7,41 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { User } from '../../users/entities/users.entities';
+import { UserModel } from '../../users/entities/users.entities';
 
 @Entity('user_sessions')
 export class UserSession {
   @PrimaryGeneratedColumn()
-  id?: number;
+  id!: number;
 
   @Column({ name: 'user_id' })
-  userId?: number;
+  userId!: number;
 
   @Column({ unique: true })
-  jti?: string;
+  jti!: string;
 
   @Column({ comment: 'sha256 hashed' })
-  token?: string;
+  token!: string;
 
   @Column({ name: 'refresh_token', comment: 'sha256 hashed' })
-  refreshToken?: string;
+  refreshToken!: string;
 
   @Column({ name: 'token_expired' })
-  tokenExpired?: Date;
+  tokenExpired!: Date;
 
   @Column({ name: 'refresh_token_expired' })
-  refreshTokenExpired?: Date;
+  refreshTokenExpired!: Date;
 
   @CreateDateColumn({ name: 'created_at' })
-  createdAt?: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn({ name: 'updated_at' })
-  updatedAt?: Date;
+  updatedAt!: Date;
 
   @Column({ name: 'revoked_at', type: 'timestamp', nullable: true })
   revokedAt?: Date | null;
 
-  @ManyToOne(() => User, (user) => user.sessions, { onDelete: 'CASCADE' })
+  @ManyToOne(() => UserModel, (user) => user.sessions, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
-  user?: User;
+  user!: UserModel;
 }

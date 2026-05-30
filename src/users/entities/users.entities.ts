@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -14,27 +15,28 @@ export enum UserRole {
 }
 
 @Entity('users')
-export class User {
+export class UserModel {
   @PrimaryGeneratedColumn()
-  id?: number;
+  id!: number;
 
   @Column({ unique: true })
-  email?: string;
+  @Index()
+  email!: string;
 
   @Column({ name: 'full_name' })
-  fullName?: string;
+  fullName!: string;
 
   @Column({ type: 'enum', enum: UserRole, default: UserRole.USER })
-  role?: UserRole;
+  role!: UserRole;
 
   @Column()
-  password?: string;
+  password!: string;
 
   @CreateDateColumn({ name: 'created_at' })
-  createdAt?: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn({ name: 'updated_at' })
-  updatedAt?: Date;
+  updatedAt!: Date;
 
   @OneToMany(() => UserSession, (session) => session.user)
   sessions?: UserSession[];
