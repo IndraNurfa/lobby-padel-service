@@ -1,4 +1,4 @@
-import { Logger, ValidationPipe } from '@nestjs/common';
+import { ConsoleLogger, Logger, ValidationPipe } from '@nestjs/common';
 import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { GlobalExceptionFilter } from './core/filters/global-exception.filter';
@@ -6,7 +6,9 @@ import { GlobalExceptionFilter } from './core/filters/global-exception.filter';
 async function bootstrap() {
   const logger = new Logger();
   const app = await NestFactory.create(AppModule, {
-    logger: ['verbose', 'debug', 'log', 'warn', 'error', 'fatal'],
+    logger: new ConsoleLogger({
+      colors: false,
+    }),
   });
 
   const globalPrefix = 'api';
@@ -20,7 +22,6 @@ async function bootstrap() {
     }),
   );
 
-  // Register global exception filter
   const httpAdapterHost = app.get(HttpAdapterHost);
   app.useGlobalFilters(new GlobalExceptionFilter(httpAdapterHost));
 
