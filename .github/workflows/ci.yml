@@ -1,0 +1,68 @@
+# CI Workflow for NestJS TypeScript Project
+#
+# This workflow runs on every push to main/develop and pull requests targeting
+# these branches. It performs:
+#   - TypeScript type checking (tsc --noEmit)
+#   - ESLint linting (npm run lint)
+#   - Production build verification (npm run build)
+#
+# tests will be added later
+
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository code
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Setup Node.js with pnpm caching enabled
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      # Setup pnpm package manager
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      # Cache node_modules for faster installs
+      - name: Cache node_modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
+
+      # Install dependencies using pnpm ci (clean install)
+      - name: Install dependencies
+        run: pnpm ci
+
+      # Type check TypeScript without emitting output
+      - name: Type check
+        run: npx tsc --noEmit
+
+      # Run ESLint to check for code style issues
+      - name: Lint
+        run: pnpm lint
+
+      # Build the application to verify compilation
+      - name: Build
+        run: pnpm build
