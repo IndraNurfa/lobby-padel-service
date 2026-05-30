@@ -27,33 +27,18 @@ jobs:
     steps:
       # Checkout the repository code
       - name: Checkout
-        uses: actions/checkout@v4
-
-      # Setup Node.js with pnpm caching enabled
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: pnpm
+        uses: actions/checkout@v6
 
       # Setup pnpm package manager
       - name: Setup pnpm
-        uses: pnpm/action-setup@v2
+        uses: pnpm/action-setup@v6
         with:
-          version: 8
-
-      # Cache node_modules for faster installs
-      - name: Cache node_modules
-        uses: actions/cache@v4
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-
+          version: 10
+          cache: true
 
       # Install dependencies using pnpm ci (clean install)
       - name: Install dependencies
-        run: pnpm ci
+        run: pnpm install
 
       # Type check TypeScript without emitting output
       - name: Type check
