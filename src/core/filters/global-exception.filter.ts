@@ -47,11 +47,15 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     if (exception instanceof HttpException) {
       statusCode = exception.getStatus();
       const exceptionResponse = exception.getResponse();
-      message =
-        typeof exceptionResponse === 'string'
-          ? exceptionResponse
-          : (exceptionResponse as Record<string, any>).message ||
-            'Unknown error';
+
+      if (typeof exceptionResponse === 'string') {
+        message = exceptionResponse;
+      } else {
+        const responseObj = exceptionResponse as Record<string, any>;
+        // Try to get message from 'details' field first (from ResponseInterceptor)
+        // Otherwise use 'message' field
+        message = responseObj.details || responseObj.message || 'Unknown error';
+      }
     }
     // Handle ValidationError from class-validator
     else if (

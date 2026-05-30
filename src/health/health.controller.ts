@@ -33,7 +33,7 @@ export class HealthController {
   @Cron(CronExpression.EVERY_5_MINUTES)
   @HealthCheck()
   liveness() {
-    this.logger.debug('Performing liveness check');
+    this.logger.log('Performing liveness check');
     return this.health.check([]); // just: am I alive?
   }
 

@@ -5,11 +5,20 @@ import { GlobalExceptionFilter } from './core/filters/global-exception.filter';
 
 async function bootstrap() {
   const logger = new Logger();
-  const app = await NestFactory.create(AppModule, {
-    logger: new ConsoleLogger({
-      colors: false,
-    }),
-  });
+  const nodeEnv = process.env.NODE_ENV || 'development';
+  let options;
+
+  if (nodeEnv === 'development') {
+    options = { logger: true }; // Enable default logger
+  } else {
+    options = {
+      logger: new ConsoleLogger({
+        colors: false,
+      }),
+    }; // Disable logger color in production
+  }
+
+  const app = await NestFactory.create(AppModule, options);
 
   const globalPrefix = 'api';
   app.setGlobalPrefix(globalPrefix);

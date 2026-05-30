@@ -23,7 +23,7 @@ export class LoggerMiddleware implements NestMiddleware {
         level:
           statusCode >= 500 ? 'error' : statusCode >= 400 ? 'warn' : 'info',
         correlationId: req.headers['x-correlation-id'] ?? null,
-        ip: req.ip,
+        ip: req.ip || req.socket?.remoteAddress || '-',
         method: req.method,
         path: req.originalUrl,
         statusCode,
