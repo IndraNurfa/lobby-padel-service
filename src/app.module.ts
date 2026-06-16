@@ -1,12 +1,15 @@
-import { Module } from '@nestjs/common';
+import { CacheModule } from '@nestjs/cache-manager';
+import { ClassSerializerInterceptor, Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ScheduleModule } from '@nestjs/schedule';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { AuthModule } from './auth/auth.module';
 import { CoreModule } from './core/core.module';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { CacheModule } from '@nestjs/cache-manager';
 import { HealthModule } from './health/health.module';
-import { ScheduleModule } from '@nestjs/schedule';
+import { UsersModule } from './users/users.module';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -31,8 +34,16 @@ import { ScheduleModule } from '@nestjs/schedule';
     CacheModule.register({ isGlobal: true }),
     ScheduleModule.forRoot(),
     HealthModule,
+    AuthModule,
+    UsersModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ClassSerializerInterceptor,
+    },
+  ],
 })
 export class AppModule {}
