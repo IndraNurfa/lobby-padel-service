@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import {
   BadRequestException,
@@ -143,6 +144,7 @@ export class AuthService {
 
   async generateJwt(data: any): Promise<string> {
     const expire =
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       data.token_type === 'access_token'
         ? this.access_token_expires
         : this.refresh_token_expires;
