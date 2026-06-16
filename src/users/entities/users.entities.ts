@@ -8,6 +8,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { UserSession } from '../../auth/entities/session.entities';
+import { Exclude } from 'class-transformer';
 
 export enum UserRole {
   ADMIN = 'admin',
@@ -30,6 +31,7 @@ export class UserModel {
   role!: UserRole;
 
   @Column()
+  @Exclude()
   password!: string;
 
   @CreateDateColumn({ name: 'created_at' })
