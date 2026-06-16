@@ -14,4 +14,8 @@ export class AuthRepository {
   async saveSession(data) {
     await this.repo.save(data);
   }
+
+  async findOne(jti: string): Promise<SessionModel | null> {
+    return await this.repo.findOne({ where: { jti } });
+  }
 }
