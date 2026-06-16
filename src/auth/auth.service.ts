@@ -85,8 +85,6 @@ export class AuthService {
       }),
     ]);
 
-    // const { password, createdAt, updatedAt, ...user } = exist;
-
     return { exist, access_token, refresh_token };
   }
 

@@ -25,7 +25,7 @@ export class UserModel {
   email!: string;
 
   @Column({ name: 'full_name' })
-  fullName!: string;
+  full_name!: string;
 
   @Column({ type: 'enum', enum: UserRole, default: UserRole.USER })
   role!: UserRole;

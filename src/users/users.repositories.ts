@@ -12,8 +12,7 @@ export class UsersRepository {
 
   async createUser(data: UserModel): Promise<UserModel> {
     const user = await this.repo.save(data);
-    this.logger.log(`User created:: ${user.id}`);
-    return data;
+    return user;
   }
 
   async findByEmail(email: string): Promise<UserModel | null> {
