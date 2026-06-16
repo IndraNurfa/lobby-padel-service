@@ -12,17 +12,19 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import * as bcrypt from 'bcrypt';
+import { compare, hash } from 'bcrypt';
 import type { Cache } from 'cache-manager';
 import { customAlphabet } from 'nanoid';
+import { createHash } from 'node:crypto';
+import { uuidv7 } from 'uuidv7';
 import { UsersService } from '../users/users.service';
+import { AuthRepository } from './auth.repositories';
 import {
   LoginByPassDto,
   LoginDto,
   RegisterDto,
   VerifyOtpDto,
 } from './dto/req-auth.dto';
-import { randomUUID } from 'node:crypto';
 
 @Injectable()
 export class AuthService {
@@ -36,6 +38,7 @@ export class AuthService {
     private readonly configService: ConfigService,
     private readonly jwtService: JwtService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    private readonly authRepository: AuthRepository,
   ) {
     this.jwtSecret =
       this.configService.get<string>('JWT_SECRET') || 'JWT_SECRET';
@@ -50,7 +53,7 @@ export class AuthService {
     if (exist) {
       throw new ConflictException('User with this email already exists');
     }
-    const hashed = await bcrypt.hash(dto.password, 12);
+    const hashed = await hash(dto.password, 12);
 
     dto.password = hashed;
 
@@ -63,15 +66,12 @@ export class AuthService {
       throw new UnauthorizedException('Wrong Email or Password!');
     }
 
-    const isPasswordMatching = await bcrypt.compare(
-      dto.password,
-      exist.password,
-    );
+    const isPasswordMatching = await compare(dto.password, exist.password);
     if (!isPasswordMatching) {
       throw new UnauthorizedException('Wrong Email or Password!');
     }
 
-    const jti = randomUUID();
+    const jti = uuidv7();
 
     const jwtData = { jti, sub: exist.id, role: exist.role };
 
@@ -84,6 +84,29 @@ export class AuthService {
         ...jwtData,
         token_type: 'refresh_token',
       }),
+    ]);
+
+    const [hashed_access_token, hashed_refresh_token] = [
+      this.hash(access_token),
+      this.hash(refresh_token),
+    ];
+
+    const session = {
+      userId: exist.id,
+      jti,
+      token: hashed_access_token,
+      refreshToken: hashed_refresh_token,
+      tokenExpired: new Date(Date.now() + 15 * 60 * 1000),
+      refreshTokenExpired: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    };
+
+    await Promise.all([
+      this.authRepository.saveSession(session),
+      this.cacheManager.set<string>(
+        `auth:token:${jti}`,
+        hashed_access_token,
+        15 * 60 * 1000,
+      ),
     ]);
 
     return { ...exist, access_token, refresh_token };
@@ -140,6 +163,10 @@ export class AuthService {
     }
 
     return 'OK!';
+  }
+
+  hash(data: string): string {
+    return createHash('sha256').update(data).digest('hex');
   }
 
   async generateJwt(data: any): Promise<string> {

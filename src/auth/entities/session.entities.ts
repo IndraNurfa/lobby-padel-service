@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -18,12 +19,24 @@ export class SessionModel {
   userId!: number;
 
   @Column({ unique: true })
+  @Index()
   jti!: string;
 
-  @Column({ comment: 'sha256 hashed' })
+  @Column({
+    comment: 'sha256 hashed',
+    type: 'char',
+    length: 64,
+    unique: true,
+  })
   token!: string;
 
-  @Column({ name: 'refresh_token', comment: 'sha256 hashed' })
+  @Column({
+    name: 'refresh_token',
+    comment: 'sha256 hashed',
+    type: 'char',
+    length: 64,
+    unique: true,
+  })
   refreshToken!: string;
 
   @Column({ name: 'token_expired' })

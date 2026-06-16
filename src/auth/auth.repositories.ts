@@ -11,7 +11,7 @@ export class AuthRepository {
     private readonly repo: Repository<SessionModel>,
   ) {}
 
-  async saveSession(data: SessionModel): Promise<SessionModel> {
-    return await this.repo.save(data);
+  async saveSession(data) {
+    await this.repo.save(data);
   }
 }
