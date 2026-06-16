@@ -3,13 +3,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from '../users/users.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { UserSession } from './entities/session.entities';
+import { SessionModel } from './entities/session.entities';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([UserSession]),
+    TypeOrmModule.forFeature([SessionModel]),
     UsersModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],

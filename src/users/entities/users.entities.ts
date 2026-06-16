@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { UserSession } from '../../auth/entities/session.entities';
+import { SessionModel } from '../../auth/entities/session.entities';
 import { Exclude } from 'class-transformer';
 
 export enum UserRole {
@@ -40,8 +40,8 @@ export class UserModel {
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt!: Date;
 
-  @OneToMany(() => UserSession, (session) => session.user)
-  sessions?: UserSession[];
+  @OneToMany(() => SessionModel, (session) => session.user)
+  sessions?: SessionModel[];
 
   //   @OneToMany(() => Booking, (booking) => booking.createdBy)
   //   bookings: Booking[];

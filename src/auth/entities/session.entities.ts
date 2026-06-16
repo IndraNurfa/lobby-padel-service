@@ -10,7 +10,7 @@ import {
 import { UserModel } from '../../users/entities/users.entities';
 
 @Entity('user_sessions')
-export class UserSession {
+export class SessionModel {
   @PrimaryGeneratedColumn()
   id!: number;
 
