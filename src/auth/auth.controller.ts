@@ -11,7 +11,7 @@ import {
   LoginByPassDto,
   LoginDto,
   RegisterDto,
-  VeryfyOtpDto,
+  VerifyOtpDto,
 } from './dto/req-auth.dto';
 import { UserModel } from '../users/entities/users.entities';
 import { SerializationInterceptor } from '../core/interceptors/serialization.interceptor';
@@ -55,8 +55,8 @@ export class AuthController {
     }
   }
 
-  @Post('login/otp/veryfy')
-  async verifyOtp(@Body() verifyOtp: VeryfyOtpDto) {
+  @Post('login/otp/verify')
+  async verifyOtp(@Body() verifyOtp: VerifyOtpDto) {
     try {
       return await this.authService.verifyOtp(verifyOtp);
     } catch (error) {

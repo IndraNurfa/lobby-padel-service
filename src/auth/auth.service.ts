@@ -20,7 +20,7 @@ import {
   LoginByPassDto,
   LoginDto,
   RegisterDto,
-  VeryfyOtpDto,
+  VerifyOtpDto,
 } from './dto/req-auth.dto';
 import { randomUUID } from 'node:crypto';
 
@@ -114,7 +114,7 @@ export class AuthService {
     return 'OK!';
   }
 
-  async verifyOtp(dto: VeryfyOtpDto): Promise<string> {
+  async verifyOtp(dto: VerifyOtpDto): Promise<string> {
     const [otp, attemps] = await Promise.all([
       this.cacheManager.get<string>(`auth:otp:${dto.email}`),
       this.cacheManager.get<number>(`auth:otp:${dto.email}:attempts`),
