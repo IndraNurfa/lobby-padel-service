@@ -15,7 +15,7 @@ import {
 } from './dto/req-auth.dto';
 import { UserModel } from '../users/entities/users.entities';
 import { SerializationInterceptor } from '../core/interceptors/serialization.interceptor';
-import { ResponseLoginDto } from './dto/resp-auth.dto';
+import { ResponseLoginDto, ResponseRegisterDto } from './dto/resp-auth.dto';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('auth')
@@ -23,7 +23,7 @@ export class AuthController {
   private readonly logger = new Logger(AuthController.name);
   constructor(private readonly authService: AuthService) {}
 
-  @UseInterceptors(new SerializationInterceptor(ResponseLoginDto))
+  @UseInterceptors(new SerializationInterceptor(ResponseRegisterDto))
   @Post('register')
   async register(@Body() registerDto: RegisterDto): Promise<UserModel> {
     try {
@@ -34,6 +34,7 @@ export class AuthController {
     }
   }
 
+  @UseInterceptors(new SerializationInterceptor(ResponseLoginDto))
   @Post('login')
   async loginByEmailPassword(@Body() loginDto: LoginByPassDto) {
     try {

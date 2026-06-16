@@ -40,7 +40,7 @@ export class AuthService {
     this.jwtSecret =
       this.configService.get<string>('JWT_SECRET') || 'JWT_SECRET';
     this.access_token_expires =
-      this.configService.get<string>('ACCESS_TOKEN_EXP') || '15M';
+      this.configService.get<string>('ACCESS_TOKEN_EXP') || '1H';
     this.refresh_token_expires =
       this.configService.get<string>('REFRESH_TOKEN_EXP') || '7D';
   }
@@ -86,7 +86,7 @@ export class AuthService {
       }),
     ]);
 
-    return { exist, access_token, refresh_token };
+    return { ...exist, access_token, refresh_token };
   }
 
   async loginByOtp(dto: LoginDto): Promise<string> {
