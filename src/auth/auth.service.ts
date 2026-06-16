@@ -15,7 +15,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import type { Cache } from 'cache-manager';
 import { customAlphabet } from 'nanoid';
-import { UsersService } from 'src/users/users.service';
+import { UsersService } from '../users/users.service';
 import {
   LoginByPassDto,
   LoginDto,

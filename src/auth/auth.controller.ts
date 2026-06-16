@@ -13,8 +13,8 @@ import {
   RegisterDto,
   VeryfyOtpDto,
 } from './dto/req-auth.dto';
-import { UserModel } from 'src/users/entities/users.entities';
-import { SerializationInterceptor } from 'src/core/interceptors/serialization.interceptor';
+import { UserModel } from '../users/entities/users.entities';
+import { SerializationInterceptor } from '../core/interceptors/serialization.interceptor';
 import { ResponseLoginDto } from './dto/resp-auth.dto';
 
 @UseInterceptors(ClassSerializerInterceptor)
