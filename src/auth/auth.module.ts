@@ -1,15 +1,18 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from '../users/users.module';
 import { AuthController } from './auth.controller';
+import { AuthRepository } from './auth.repositories';
 import { AuthService } from './auth.service';
-import { UserSession } from './entities/session.entities';
-import { JwtModule } from '@nestjs/jwt';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { SessionModel } from './entities/session.entities';
+import { JwtStrategy } from './strategies/jwt.strategy';
+import { JwtRefreshStrategy } from './strategies/jwt-refresh.strategy';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([UserSession]),
+    TypeOrmModule.forFeature([SessionModel]),
     UsersModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
@@ -23,6 +26,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService],
+  providers: [AuthService, AuthRepository, JwtStrategy, JwtRefreshStrategy],
 })
 export class AuthModule {}

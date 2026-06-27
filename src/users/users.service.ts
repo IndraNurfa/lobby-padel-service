@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { Injectable } from '@nestjs/common';
 import { UserModel } from './entities/users.entities';
 import { UsersRepository } from './users.repositories';
@@ -7,7 +8,6 @@ export class UsersService {
   constructor(private usersRepository: UsersRepository) {}
 
   async createUser(data: any): Promise<UserModel> {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     return await this.usersRepository.createUser(data);
   }
 

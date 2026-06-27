@@ -11,8 +11,7 @@ export class UsersRepository {
   ) {}
 
   async createUser(data: UserModel): Promise<UserModel> {
-    const user = await this.repo.save(data);
-    return user;
+    return await this.repo.save(data);
   }
 
   async findByEmail(email: string): Promise<UserModel | null> {
