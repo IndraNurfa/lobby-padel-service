@@ -26,7 +26,7 @@ export class LoginByPassDto {
   password!: string;
 }
 
-export class VeryfyOtpDto {
+export class VerifyOtpDto {
   @IsEmail()
   email!: string;
 
