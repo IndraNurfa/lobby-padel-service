@@ -165,6 +165,10 @@ export class AuthService {
     return 'OK!';
   }
 
+  async findSession(jti: string): Promise<any> {
+    return await this.authRepository.findOne(jti);
+  }
+
   hash(data: string): string {
     return createHash('sha256').update(data).digest('hex');
   }
