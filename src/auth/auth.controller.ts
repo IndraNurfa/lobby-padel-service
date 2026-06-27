@@ -2,26 +2,26 @@ import {
   Body,
   ClassSerializerInterceptor,
   Controller,
-  Get,
   HttpCode,
   HttpStatus,
   Logger,
   Post,
+  Put,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
+import { SerializationInterceptor } from '../core/interceptors/serialization.interceptor';
+import { UserModel } from '../users/entities/users.entities';
 import { AuthService } from './auth.service';
+import { CurrentUser } from './decorators/current-user.decorator';
 import {
   LoginByPassDto,
   LoginDto,
   RegisterDto,
   VerifyOtpDto,
 } from './dto/req-auth.dto';
-import { UserModel } from '../users/entities/users.entities';
-import { SerializationInterceptor } from '../core/interceptors/serialization.interceptor';
 import { ResponseLoginDto, ResponseRegisterDto } from './dto/resp-auth.dto';
 import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
-import { CurrentUser } from './decorators/current-user.decorator';
 import type { TokenPayload } from './types/auth';
 
 @UseInterceptors(ClassSerializerInterceptor)
@@ -72,26 +72,15 @@ export class AuthController {
     }
   }
 
-  /**
-   * Test endpoint for JwtRefreshGuard.
-   * Send a valid refresh token as a Bearer token to get OK.
-   *
-   * GET /auth/test/refresh
-   */
-  @Get('test/refresh')
+  @Put('refresh-token')
   @UseGuards(JwtRefreshGuard)
   @HttpCode(HttpStatus.OK)
-  testRefreshGuard(@CurrentUser() user: TokenPayload) {
-    this.logger.log(
-      `[testRefreshGuard] Refresh token valid for sub=${user.sub}`,
-    );
-    return {
-      status: 'ok',
-      message: 'Refresh token is valid',
-      user: {
-        sub: user.sub,
-        role: user.role,
-      },
-    };
+  async refreshToken(@CurrentUser() user: TokenPayload) {
+    try {
+      return await this.authService.getRefreshToken(user);
+    } catch (error) {
+      this.logger.error('Error during refreshing token:: ', error);
+      throw error;
+    }
   }
 }
