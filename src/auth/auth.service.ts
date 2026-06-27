@@ -41,7 +41,7 @@ export class AuthService {
     private readonly authRepository: AuthRepository,
   ) {
     this.jwtSecret =
-      this.configService.get<string>('JWT_SECRET') || 'JWT_SECRET';
+      this.configService.get<string>('JWT_SECRET') || 'super-secret-key';
     this.access_token_expires =
       this.configService.get<string>('ACCESS_TOKEN_EXP') || '1H';
     this.refresh_token_expires =

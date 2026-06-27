@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import { SessionModel } from './entities/session.entities';
 
 @Injectable()
@@ -16,6 +16,6 @@ export class AuthRepository {
   }
 
   async findOne(jti: string): Promise<SessionModel | null> {
-    return await this.repo.findOne({ where: { jti, revokedAt: undefined } });
+    return await this.repo.findOne({ where: { jti, revokedAt: IsNull() } });
   }
 }
