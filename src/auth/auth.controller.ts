@@ -88,10 +88,10 @@ export class AuthController {
   @Post('logout')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
-  logout(@CurrentUser() user: TokenPayload) {
+  async logout(@CurrentUser() user: TokenPayload) {
     try {
-      const { sub } = user;
-      this.logger.log('sub', sub);
+      const { jti } = user;
+      await this.authService.revokeToken(jti);
       return 'Success';
     } catch (error) {
       this.logger.error('Error during logout:: ', error);
