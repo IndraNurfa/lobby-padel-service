@@ -25,6 +25,7 @@ import {
   RegisterDto,
   VerifyOtpDto,
 } from './dto/req-auth.dto';
+import { TokenPayload } from './types/auth';
 
 @Injectable()
 export class AuthService {
@@ -163,6 +164,31 @@ export class AuthService {
     }
 
     return 'OK!';
+  }
+
+  async getRefreshToken(data: TokenPayload) {
+    const { sub, jti, role } = data;
+    await this.cacheManager.del(`auth:token:${jti}`);
+
+    const access_token = await this.generateJwt({
+      sub,
+      jti,
+      role,
+      token_type: 'access_token',
+    });
+
+    const hashed_access_token = this.hash(access_token);
+
+    await Promise.all([
+      this.authRepository.updateAccessToken(jti, hashed_access_token),
+      this.cacheManager.set<string>(
+        `auth:token:${jti}`,
+        hashed_access_token,
+        15 * 60 * 1000,
+      ),
+    ]);
+
+    return { access_token };
   }
 
   async findSession(jti: string): Promise<any> {
