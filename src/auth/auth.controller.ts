@@ -23,6 +23,7 @@ import {
 import { ResponseLoginDto, ResponseRegisterDto } from './dto/resp-auth.dto';
 import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
 import type { TokenPayload } from './types/auth';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('auth')
@@ -80,6 +81,20 @@ export class AuthController {
       return await this.authService.getRefreshToken(user);
     } catch (error) {
       this.logger.error('Error during refreshing token:: ', error);
+      throw error;
+    }
+  }
+
+  @Post('logout')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  logout(@CurrentUser() user: TokenPayload) {
+    try {
+      const { sub } = user;
+      this.logger.log('sub', sub);
+      return 'Success';
+    } catch (error) {
+      this.logger.error('Error during logout:: ', error);
       throw error;
     }
   }
