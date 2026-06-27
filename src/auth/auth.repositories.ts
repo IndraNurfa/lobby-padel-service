@@ -20,12 +20,20 @@ export class AuthRepository {
   }
 
   async updateAccessToken(jti: string, token: string) {
-    const expired = new Date(Date.now() + 15 * 60 * 1000);
     return await this.repo.update(
       { jti },
       {
         token,
-        tokenExpired: expired,
+        tokenExpired: new Date(Date.now() + 15 * 60 * 1000),
+      },
+    );
+  }
+
+  revokeToken(jti: string) {
+    return this.repo.update(
+      { jti },
+      {
+        revokedAt: new Date(),
       },
     );
   }
