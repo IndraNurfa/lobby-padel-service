@@ -16,6 +16,6 @@ export class AuthRepository {
   }
 
   async findOne(jti: string): Promise<SessionModel | null> {
-    return await this.repo.findOne({ where: { jti } });
+    return await this.repo.findOne({ where: { jti, revokedAt: undefined } });
   }
 }
