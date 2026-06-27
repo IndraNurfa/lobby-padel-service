@@ -191,6 +191,10 @@ export class AuthService {
     return { access_token };
   }
 
+  revokeToken(jti: string) {
+    return this.authRepository.revokeToken(jti);
+  }
+
   async findSession(jti: string): Promise<any> {
     return await this.authRepository.findOne(jti);
   }
