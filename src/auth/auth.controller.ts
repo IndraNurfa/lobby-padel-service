@@ -1,4 +1,3 @@
-import { ApiErrorResponse, ApiSuccessResponse } from '@/common/swagger';
 import {
   Body,
   ClassSerializerInterceptor,
@@ -17,6 +16,7 @@ import {
   ApiOperation,
   ApiResponse,
 } from '@nestjs/swagger';
+import { ApiErrorResponse, ApiSuccessResponse } from '../common/swagger';
 import { SerializationInterceptor } from '../core/interceptors/serialization.interceptor';
 import { UserModel } from '../users/entities/users.entities';
 import { AuthService } from './auth.service';
