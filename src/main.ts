@@ -47,7 +47,8 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document, {
+  const swaggerPath = 'api/docs';
+  SwaggerModule.setup(swaggerPath, app, document, {
     swaggerOptions: {
       persistAuthorization: true,
     },
@@ -55,6 +56,7 @@ async function bootstrap() {
 
   await app.listen(process.env.PORT ?? 3000);
   logger.log(`Application is running on: ${await app.getUrl()}`);
+  logger.log(`Swagger docs available at: ${await app.getUrl()}/${swaggerPath}`);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-floating-promises
