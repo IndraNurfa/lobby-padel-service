@@ -1,0 +1,47 @@
+name: Sync main → develop
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  create-pr:
+    name: Create PR from main to develop
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create or reuse PR from main → develop
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const base = 'develop';
+            const head = 'main';
+
+            // Compare branches first
+            const compare = await github.rest.repos.compareCommits({ owner, repo, base, head });
+            if ((compare.data.status === 'identical' || compare.data.total_commits === 0) && compare.data.files?.length === 0) {
+              core.info(`No differences between ${head} and ${base}. Nothing to do.`);
+              return;
+            }
+
+            // Check for an existing open PR from main -> develop
+            const pulls = await github.rest.pulls.list({ owner, repo, state: 'open', head: `${owner}:${head}`, base });
+            if (pulls.data.length > 0) {
+              core.info(`Open PR already exists: #${pulls.data[0].number}. Exiting.`);
+              return;
+            }
+
+            // Create a new PR
+            const title = `chore(sync): merge ${head} → ${base}`;
+            const body = `This is an automated pull request created by workflow \`Sync main → develop\` to keep the develop branch up-to-date with main.`;
+            const pr = await github.rest.pulls.create({ owner, repo, head, base, title, body });
+            core.info(`Created PR #${pr.data.number} - ${pr.data.html_url}`);
