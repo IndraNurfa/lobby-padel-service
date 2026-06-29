@@ -1,4 +1,4 @@
-import { SerializationInterceptor } from '@/core/interceptors/serialization.interceptor';
+import { SerializationInterceptor } from '../core/interceptors/serialization.interceptor';
 import {
   ClassSerializerInterceptor,
   Controller,
