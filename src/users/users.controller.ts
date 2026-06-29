@@ -1,46 +1,46 @@
+import { SerializationInterceptor } from '@/core/interceptors/serialization.interceptor';
 import {
+  ClassSerializerInterceptor,
   Controller,
   Get,
   HttpCode,
   HttpStatus,
   Logger,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
-import { UsersService } from './users.service';
+import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { Roles } from '../auth/decorators/roles.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
-import { Roles } from '../auth/decorators/roles.decorator';
-import { CurrentUser } from '../auth/decorators/current-user.decorator';
-import { UserRole } from './entities/users.entities';
 import type { TokenPayload } from '../auth/types/auth';
+import { ApiSuccessResponse } from '../common/swagger';
+import { ResponseUserDto } from './dto/resp-users.dto';
+import { UserRole } from './entities/users.entities';
+import { UsersService } from './users.service';
 
+@UseInterceptors(ClassSerializerInterceptor)
 @Controller('users')
-@UseGuards(JwtAuthGuard) // All routes in this controller require a valid access token
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 export class UsersController {
   private readonly logger = new Logger(UsersController.name);
 
   constructor(private readonly usersService: UsersService) {}
 
-  /**
-   * Test endpoint for @CurrentUser() decorator.
-   * Requires: valid access token (any role).
-   *
-   * GET /users/test/me
-   */
-  @Get('test/me')
-  @HttpCode(HttpStatus.OK)
-  testCurrentUser(@CurrentUser() user: TokenPayload) {
-    this.logger.log(
-      `[testCurrentUser] Authenticated user sub=${user.sub}, role=${user.role}`,
-    );
-    return {
-      status: 'ok',
-      message: 'CurrentUser guard is working',
-      user: {
-        sub: user.sub,
-        role: user.role,
-      },
-    };
+  @UseInterceptors(new SerializationInterceptor(ResponseUserDto))
+  @Get('profiles')
+  @ApiOperation({ summary: 'Get Profiles' })
+  @ApiSuccessResponse(ResponseUserDto)
+  async getProfiles(@CurrentUser() user: TokenPayload) {
+    try {
+      const { sub } = user;
+      return await this.usersService.findById(sub);
+    } catch (error) {
+      this.logger.error('Error during getting profiles:: ', error);
+      throw error;
+    }
   }
 
   /**

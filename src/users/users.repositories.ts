@@ -19,4 +19,10 @@ export class UsersRepository {
       where: { email },
     });
   }
+
+  async findById(id: number): Promise<UserModel | null> {
+    return await this.repo.findOne({
+      where: { id },
+    });
+  }
 }
