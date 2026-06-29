@@ -12,7 +12,7 @@ export class ResponseRegisterDto {
 
   @ApiProperty({ example: 'John Doe' })
   @Expose()
-  fullName!: string;
+  full_name!: string;
 
   @Exclude()
   password!: string;
@@ -39,7 +39,7 @@ export class ResponseLoginDto {
 
   @ApiProperty({ example: 'John Doe' })
   @Expose()
-  fullName!: string;
+  full_name!: string;
 
   @Exclude()
   password!: string;
