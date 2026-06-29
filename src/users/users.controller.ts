@@ -9,15 +9,16 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import type { TokenPayload } from '../auth/types/auth';
+import { ApiSuccessResponse } from '../common/swagger';
 import { ResponseUserDto } from './dto/resp-users.dto';
 import { UserRole } from './entities/users.entities';
 import { UsersService } from './users.service';
-import { ApiBearerAuth } from '@nestjs/swagger';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('users')
@@ -30,7 +31,8 @@ export class UsersController {
 
   @UseInterceptors(new SerializationInterceptor(ResponseUserDto))
   @Get('profiles')
-  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Get Profiles' })
+  @ApiSuccessResponse(ResponseUserDto)
   async getProfiles(@CurrentUser() user: TokenPayload) {
     try {
       const { sub } = user;
